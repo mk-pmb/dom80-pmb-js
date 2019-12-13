@@ -1,5 +1,5 @@
 { "name": "dom80-pmb",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Yet another DOM utility library, optimized for Firefox.",
   "keywords": [],
 
@@ -16,7 +16,7 @@
 
   "private": false, "license": "ISC",
 
-  "main": "dom80.js",
+  "main": "dist/dom80.latest.min.js",
   "scripts": { "test": "nodejs test/all.js" },
   "directories": { "test": "test" },
 
