@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html><head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>dom80-pmb in your browser console</title>
+  <meta name="viewport" content="width=device-width">
+  <style type="text/css">
+    html, body { background-color: white; color: black; }
+    p { margin: 0; margin-bottom: 0.5em; }
+    fieldset { float: left; margin: 1em; }
+    fieldset.log { position: fixed; top: 0; right: 0; }
+    fieldset > legend { padding: 0 0.25em; }
+    textarea { resize: both; }
+    .log textarea { max-height: 80vh; }
+    .colorbars label { display: inline-block; }
+    .colorbars label input + b {
+      display: inline-block; position: relative; overflow: hidden;
+      margin-left: 0.2em; width: 20em; height: 0.75em;
+      border: 1px solid var(--c);
+    }
+    .colorbars label input + b:before {
+      display: block; content: " "; position: absolute;
+      top: 0; width: 20%; bottom: 0; background-color: var(--c);
+      left: 0; transition: left 8s linear;
+    }
+    .colorbars label input:checked + b:before { left: 80%; }
+    #page-load-progress-bar {
+      position: fixed; top: 0; right: 0; height: 0.5em; width: 100%;
+      background-color: orange; border-bottom: 2px solid darkorange;
+      transition: width 10s linear;
+    }
+    #page-load-progress-bar.fading { width: 0; }
+  </style>
+</head><body>
+<div id="page-load-progress-bar"></div>
+<form action="#" method="get">
+  <fieldset class="log"><legend>Event Log</legend>
+    <textarea cols="40" rows="50" wrap="off" tabindex="-1"></textarea>
+  </fieldset>
+  <fieldset class="inputs"><legend>Inputs</legend>
+    <p>
+      <input type="checkbox"> <input type="checkbox"> <input type="checkbox">
+      <input type="checkbox"> <input type="checkbox"> <input type="checkbox">
+      <input type="checkbox"> <input type="checkbox"> <input type="checkbox">
+    </p>
+    <p><input type="text" size="20"><input type="text" size="20"></p>
+    <p><textarea cols="40" rows="4" wrap="off"></textarea></p>
+    <div class="colorbars">
+      <label style="--c: #C6F16D;"><input type="checkbox"><b></b></label>
+    </div>
+  </fieldset>
+</form>
+<script type="text/javascript" src="../lib/dom80.js"
+  data-jsglobal-dom80-pmb="dom80pmb"></script>
+<script type="text/javascript">
+/*jslint indent: 2, maxlen: 80, continue: false, unparam: false, browser: true */
+(function () {
+  'use strict';
+  var D = window.dom80pmb, evSymb, prevTs = 0, fo = document.forms[0],
+    tx = fo.querySelector('textarea');
+  fo.onsubmit = function nope() { return false; };
+  function padIf(b, s, a) { return (s ? ((b || '') + s + (a || '')) : ''); }
+  function percent(fr) { return (fr * 100).toFixed(2).slice(0, 5).padStart(5); }
+  function isDef(x) { return (x !== undefined); }
+  function strIfDef(x) { return (x === undefined ? x : String(x)); }
+  function hnd(ev) {
+    var tgt = ev.target;
+    if (tgt === tx) { return; }
+    D.upgradeEvent(ev);
+    if (tgt === window) { ev.lcTag = '(win)'; }
+    ev.timeRel = ev.timeStamp - prevTs;
+    prevTs = ev.timeStamp;
+    ev.logMsg = [
+      (ev.timeRel / 1e3).toFixed(2).padStart(6) + 's',
+      (evSymb[ev.type] || ev.type),
+      (ev.lcTag
+        + padIf('#', tgt.id)
+        + padIf('.', ev.cls1)
+        + padIf('$', tgt.name)
+        ),
+      (isDef(ev.fracX)
+        && ('@' + percent(ev.fracX) + ':' + percent(ev.fracY) + '%')),
+      strIfDef(ev.button),
+      strIfDef(ev.key),
+      strIfDef(ev.keyCode),
+      strIfDef(ev.charCode),
+    ].filter(Boolean);
+    console.log('event:', ev);
+    tx.value = ev.logMsg.join(' ') + '\n' + tx.value;
+  }
+  evSymb = {
+    scroll:     '|-',
+    blur:       '◌',    // doesn't bubble anyway
+    click:      'M.',
+    dblclick:   'M:',
+    enter:      '⎆',    // doesn't bubble anyway
+    focus:      '◎',
+    keydown:    'K_',
+    keypress:   'K.',
+    keyup:      'K^',
+    mousedown:  'M_',
+    // mouseenter: 'M⎆',
+    // mouseleave: 'M◌',
+    mouseup:    'M^',
+  };
+  Object.keys(evSymb).forEach(function (e) { window['on' + e] = hnd; });
+  D.tag('#page-load-progress-bar').className = 'fading';
+}());
+</script>
+</body></html>

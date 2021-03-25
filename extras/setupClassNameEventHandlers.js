@@ -17,21 +17,11 @@
   setup.verbose = false;
 
   setup.rt = function rt(opt, ev) {
-    var tgt = ev.target, tn = (tgt || false).tagName, cls, fun, late;
-    if (!tn) { return; }
-    cls = /\S+/.exec(tgt.className || '');
-    if (!cls) { return; }
-    cls = cls[0];
-    if (ev.clientX !== undefined) {
-      ev.elemBounds = tgt.getBoundingClientRect();
-      ev.elemX = ev.clientX - ev.elemBounds.left;
-      ev.elemY = ev.clientY - ev.elemBounds.top;
-    }
-    tn = tn.toLowerCase();
-    ev.lcTag = tn;
-    ev.clsTrig = cls;
-    fun = ((opt.cbPrefix || '') + tn + '_'
-      + cls.replace(/\-/g, '_') + '_' + ev.type);
+    var tgt = ev.target, fun, late;
+    setup.upgradeEvent(ev);
+    if (!(ev.lcTag && ev.cls1)) { return; }
+    fun = ((opt.cbPrefix || '') + ev.lcTag + '_'
+      + ev.cls1.replace(/\-/g, '_') + '_' + ev.type);
     late = (opt[fun + 'Late'] || opt.unroutedLate);
     fun = (opt[fun] || opt.unrouted);
     ev.clsFunc = fun;
