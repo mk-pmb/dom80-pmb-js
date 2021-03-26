@@ -12,6 +12,19 @@
     fieldset > legend { padding: 0 0.25em; }
     textarea { resize: both; }
     .log textarea { max-height: 80vh; }
+
+    #page-load-progress-bar {
+      position: fixed; top: 0; left: 0; right: 0; height: 0.5em;
+      background-color: palegreen; border-bottom: 1px solid grey;
+      overflow: hidden;
+    }
+    #page-load-progress-bar b {
+      display: block; height: 100%; width: 5em; background-color: yellow;
+      border-right: 100vw solid orange;
+      margin-left: 0; transition: margin-left 10s linear;
+    }
+    #page-load-progress-bar.fading b { margin-left: 100%; }
+
     .colorbars label { display: inline-block; }
     .colorbars label input + b {
       display: inline-block; position: relative; overflow: hidden;
@@ -24,15 +37,9 @@
       left: 0; transition: left 8s linear;
     }
     .colorbars label input:checked + b:before { left: 80%; }
-    #page-load-progress-bar {
-      position: fixed; top: 0; right: 0; height: 0.5em; width: 100%;
-      background-color: orange; border-bottom: 2px solid darkorange;
-      transition: width 10s linear;
-    }
-    #page-load-progress-bar.fading { width: 0; }
   </style>
 </head><body>
-<div id="page-load-progress-bar"></div>
+<div id="page-load-progress-bar"><b></b></div>
 <form action="#" method="get">
   <fieldset class="log"><legend>Event Log</legend>
     <textarea cols="40" rows="50" wrap="off" tabindex="-1"></textarea>
