@@ -1,5 +1,5 @@
 { "name": "dom80-pmb",
-  "version": "0.1.12",
+  "version": "0.2.0",
   "description": "Yet another DOM utility library, optimized for Firefox.",
   "keywords": [],
 
@@ -25,5 +25,5 @@
   },
 
 
-  "npm vs. BOM = Unexpected token": "-*- coding: UTF-8 -*-"
+  "engines": { "npm": ">=7.0.0", "node": ">=16.0.0" }
 }
